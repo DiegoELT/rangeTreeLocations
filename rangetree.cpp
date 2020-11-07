@@ -2,7 +2,7 @@
 
 using namespace std;
 
-const long long maxCities = 1e4;
+const long long maxCities = 5e3+10;
 
 struct Node {
   pair<int, int> xyCoordinates;
@@ -26,16 +26,18 @@ bool sortbysec(const pair<int,int> &a,  const pair<int,int> &b) {
 
 pair<Node *, Node *> create_range_tree(pair<int, int> v[],int l, int h, Node * lastLeafNode, bool firstDimension) {
   if(l==h) {
+    // cout << "l==h\n";
     Node * parent = new Node(v[l].first, v[l].second);
     parent -> m_pSon[0] = new Node(v[l].first, v[l]. second);
     if(lastLeafNode){ 
       lastLeafNode -> nextNode = parent -> m_pSon[0]; 
     }
     parent -> m_pSon[0] -> prevNode = lastLeafNode;
-    return make_pair(parent, parent -> m_pSon[0]);
+    return {parent, parent -> m_pSon[0]};
   } 
 
   if(l+1==h) {
+    // cout << "l+1==h\n";
     Node * parent = new Node((v[l].first + v[h].first)/2, (v[l].second + v[h].second)/2);
     parent->m_pSon[0] = new Node(v[l].first, v[l]. second);
     parent->m_pSon[1] = new Node(v[h].first, v[h]. second);
@@ -44,24 +46,24 @@ pair<Node *, Node *> create_range_tree(pair<int, int> v[],int l, int h, Node * l
     }
     parent -> m_pSon[0] -> nextNode = parent -> m_pSon[1];
     parent -> m_pSon[1] -> prevNode = parent -> m_pSon[0];
-    return make_pair(parent, parent -> m_pSon[1]);
+    return {parent, parent -> m_pSon[1]};
   }
-
-  vector<pair<int, int>> nodesInRange;
-  pair<int, int> nodesInRangeArray[maxCities];
   // TODO: Create range tree for each internal node
   
   int m = (l + h)/2;
-  pair<Node *, Node *> pairLeft = create_range_tree(v,l, m, lastLeafNode, true);
-  pair<Node *, Node *> pairRight = create_range_tree(v,m+1, h, pairLeft.second, true);
+  // cout << "m=" << m << '\n';
+  pair<Node *, Node *> pairLeft = create_range_tree(v,l, m, lastLeafNode, firstDimension);
+  pair<Node *, Node *> pairRight = create_range_tree(v,m+1, h, pairLeft.second, firstDimension);
   
   Node * parent = new Node((pairLeft.first -> xyCoordinates.first + pairRight.first -> xyCoordinates.first)/2, (pairLeft.second -> xyCoordinates.second + pairRight.second -> xyCoordinates.second)/2);
   parent -> m_pSon[0] = pairLeft.first; 
   parent -> m_pSon[1] = pairRight.first;
 
   if (firstDimension) {
+    vector< pair<int, int> > nodesInRange;
+    pair<int, int> nodesInRangeArray[maxCities];
     for (int i = l; i <= h; i++)
-    nodesInRange.emplace_back(v[i]);
+    nodesInRange.push_back(v[i]);
 
     sort(nodesInRange.begin(), nodesInRange.end(), sortbysec);
 
@@ -71,11 +73,11 @@ pair<Node *, Node *> create_range_tree(pair<int, int> v[],int l, int h, Node * l
     parent -> rootOfOwnRT = create_range_tree(nodesInRangeArray, 0, h - l + 1, nullptr, false).first;
   } 
 
-  return make_pair(parent, pairRight.second);
+  return {parent, pairRight.second};
 }
 
-vector<pair<int, int>> oneDimensionalQuery(Node * root, int l, int h) {
-  vector<pair<int, int>> elements;
+vector< pair<int, int> > oneDimensionalQuery(Node * root, int l, int h) {
+  vector< pair<int, int> > elements;
   Node * tempNode = root;
   while(tempNode -> m_pSon[0]){
     if(l < tempNode -> xyCoordinates.first)
@@ -84,7 +86,7 @@ vector<pair<int, int>> oneDimensionalQuery(Node * root, int l, int h) {
       tempNode = tempNode -> m_pSon[1];
   }
   while(tempNode && tempNode -> xyCoordinates.first <= h) {
-    elements.emplace_back(tempNode -> xyCoordinates);
+    elements.push_back(tempNode -> xyCoordinates);
     tempNode = tempNode -> nextNode;
   }
   return elements;
@@ -100,17 +102,17 @@ void print(Node * r) {
 
 int main()
 {
-    pair<int,int> v[501];
+    pair<int,int> v[3000];
 
-    for (int i = 0; i < 1000; i += 2) {
-      v[i/2] = make_pair(i, 1000 - i);
+    for (int i = 0; i < 6000; i += 2) {
+      v[i/2] = make_pair(i, 6000 - i);
     }
 
-    Node * root = create_range_tree(v,0,499, nullptr, true).first;
+    Node * root = create_range_tree(v,0,2999, nullptr, true).first;
 
     cout << "Testing both ways of printing.\n";
     
-    print(root);
+    // print(root);
 
     cout << "\n";
 
