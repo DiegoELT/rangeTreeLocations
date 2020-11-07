@@ -2,7 +2,9 @@
 
 using namespace std;
 
-const long long maxCities = 5e3+10;
+const long long maxCities = 1e5;
+
+int n;
 
 struct Node {
   pair<int, int> xyCoordinates;
@@ -17,6 +19,12 @@ struct Node {
     nextNode = nullptr;
     prevNode = nullptr;
     rootOfOwnRT = nullptr;
+  }
+  ~Node(){
+    ++n;
+    // cout << "destruyendo\n";
+    delete m_pSon[0];
+    delete m_pSon[1];
   }
 };
 
@@ -102,19 +110,21 @@ void print(Node * r) {
 
 int main()
 {
-    pair<int,int> v[3000];
+    pair<int,int> v[1000];
 
-    for (int i = 0; i < 6000; i += 2) {
-      v[i/2] = make_pair(i, 6000 - i);
+    for (int i = 0; i < 2000; i += 2) {
+      v[i/2] = make_pair(i, 2000 - i);
     }
 
-    Node * root = create_range_tree(v,0,2999, nullptr, true).first;
+    Node * root = create_range_tree(v,0,999, nullptr, false).first;
 
     cout << "Testing both ways of printing.\n";
     
     // print(root);
 
-    cout << "\n";
+    delete root;
+
+    cout << "num nodes: " << n << '\n';
 
     return 0;
 }
