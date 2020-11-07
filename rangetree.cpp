@@ -74,8 +74,23 @@ pair<Node *, Node *> create_range_tree(pair<int, int> v[],int l, int h, Node * l
   return make_pair(parent, pairRight.second);
 }
 
-void print(Node * r)
-{
+vector<pair<int, int>> oneDimensionalQuery(Node * root, int l, int h) {
+  vector<pair<int, int>> elements;
+  Node * tempNode = root;
+  while(tempNode -> m_pSon[0]){
+    if(l < tempNode -> xyCoordinates.first)
+      tempNode = tempNode -> m_pSon[0];
+    else 
+      tempNode = tempNode -> m_pSon[1];
+  }
+  while(tempNode && tempNode -> xyCoordinates.first <= h) {
+    elements.emplace_back(tempNode -> xyCoordinates);
+    tempNode = tempNode -> nextNode;
+  }
+  return elements;
+}
+    
+void print(Node * r) {
   if(!r) return;
   print(r->m_pSon[0]);
   if(!r->m_pSon[0] && !r->m_pSon[1])
@@ -85,8 +100,13 @@ void print(Node * r)
 
 int main()
 {
-    pair<int,int> v[] = {make_pair(36,37), make_pair(42,51), make_pair(62,72), make_pair(80, 80), make_pair(90, 90), make_pair(100, 100)};
-    Node * root = create_range_tree(v,0,5, nullptr, true).first;
+    pair<int,int> v[501];
+
+    for (int i = 0; i < 1000; i += 2) {
+      v[i/2] = make_pair(i, 1000 - i);
+    }
+
+    Node * root = create_range_tree(v,0,499, nullptr, true).first;
 
     cout << "Testing both ways of printing.\n";
     
