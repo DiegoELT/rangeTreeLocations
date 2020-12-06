@@ -5,6 +5,7 @@
 #include <OpenGL/gl.h>
 #include <OpenGL/glu.h>
 
+#include "rangetree.h"
 #include "macros.h"
 
 using namespace std;
@@ -39,38 +40,47 @@ void print_with_color(Color color, const string& str);
 int biggestX, biggestY;
 int queryX1, queryX2;
 int queryY1, queryY2;
-vector<pii>  points(1000);
+pii points[1000];
 vector<pii> query_result;
+Node* root;
 
 int main(int argc, char** argv) {
-     srand(time(nullptr));
+    srand(time(nullptr));
 
-     // generar los 1000 puntos y dibujarlos
-     
-     rep(i, 1, 1000) {
-         int xval = rand() % (int)WINDOW_WIDTH;
-         int yval = rand() % (int)WINDOW_HEIGHT;
-         if (xval > biggestX) biggestX = xval;
-         if (yval > biggestY) biggestY = yval;
-         points[i] = MP(xval, yval);
-     }
+    // generar los 1000 puntos
+    rep(i, 1, 1000) {
+        int xval = rand() % (int)WINDOW_WIDTH;
+        int yval = rand() % (int)WINDOW_HEIGHT;
+        if (xval > biggestX) biggestX = xval;
+        if (yval > biggestY) biggestY = yval;
+        points[i-1] = MP(xval, yval);
+    }
 
-     rep(i, 0, 999) {
-         cout << points[i].F << ", " << points[i].S << '\n';
-     }
+    rep(i, 0, 999) {
+        cout << points[i].F << ", " << points[i].S << '\n';
+    }
 
-     /// Dibujar puntos
-     draw_points(argc, argv);
+    sort(points, points+999);
 
-     // dibujar las lineas que delimitan el query
+    // crear el range tree
+    root = create_range_tree(points, 0, 999, nullptr, true).F;
 
-     // hacer el query
+    /// Dibujar puntos
+    // draw_points(argc, argv);
+    int n = 10;
+    auto start = chrono::high_resolution_clock::now();
+    for (int i = 0; i < 10; ++i) {
+        twoDimensionalQuery(root, rand()%500, rand()%999+500, rand()%500, rand()%999+500);
+    }
+    auto end = chrono::high_resolution_clock::now();
+    auto executionTime = chrono::duration_cast<chrono::microseconds>(end - start);
+    cout << "Query returned in : " << executionTime.count() << " us.\n";
 
-     // pintar los puntos que el query me retorna de color rojo
+    cout << "Programa terminando..." << endl;
 
-     cout << "Programa terminando..." << endl;
+    delete root;
 
-     return 0;
+    return 0;
 }
 
 void show_menu() {
@@ -87,8 +97,11 @@ void show_menu() {
     cin >> queryY1;
     print_with_color(VERDE, "Valor de Y2: ");
     cin >> queryY2;
-    // llamar a la funcion del range tree
-    query_result = {{100, 110}, {200, 220}, {300, 330}, {400, 440}};
+    query_result = twoDimensionalQuery(root, queryX1, queryX2, queryY1, queryY2);
+    cout << "Query result:\n";
+    for (auto& par : query_result) {
+        cout << par.F << ", " << par.S << "\n";
+    }
 }
 
 GLvoid initGL() {
