@@ -56,9 +56,9 @@ int main(int argc, char** argv) {
         points[i-1] = MP(xval, yval);
     }
 
-    rep(i, 0, 999) {
-        cout << points[i].F << ", " << points[i].S << '\n';
-    }
+    // rep(i, 0, 999) {
+    //     cout << points[i].F << ", " << points[i].S << '\n';
+    // }
 
     sort(points, points+999);
 
@@ -66,17 +66,20 @@ int main(int argc, char** argv) {
     root = create_range_tree(points, 0, 999, nullptr, true).F;
 
     /// Dibujar puntos
-    draw_points(argc, argv);
+
+    // PARA 
+    // draw_points(argc, argv);
 
     // descomentar para pruebas de stress
-    // int n = 10; // 100, 1000, 10000
-    // auto start = chrono::high_resolution_clock::now();
-    // for (int i = 0; i < n; ++i) {
-    //     twoDimensionalQuery(root, rand()%500, rand()%999+500, rand()%500, rand()%999+500);
-    // }
-    // auto end = chrono::high_resolution_clock::now();
-    // auto executionTime = chrono::duration_cast<chrono::microseconds>(end - start);
-    // cout << "Query returned in : " << executionTime.count() << " us.\n";
+    int n = 10; // 100, 1000, 10000
+    auto start = chrono::high_resolution_clock::now();
+    for (int i = 0; i < n; ++i) {
+        twoDimensionalQuery(root, rand()%500, rand()%500+499, rand()%500, rand()%500+499);
+        // aveces da segfault porque X1 > X2 o Y1 > Y2 (osea el rango es vacío), ya que estamos usando numeros random
+    }
+    auto end = chrono::high_resolution_clock::now();
+    auto executionTime = chrono::duration_cast<chrono::microseconds>(end - start);
+    cout << "Query returned in : " << executionTime.count() << " us.\n";
 
     cout << "Programa terminando..." << endl;
 
@@ -100,6 +103,7 @@ void show_menu() {
     print_with_color(VERDE, "Valor de Y2: ");
     cin >> queryY2;
     query_result = twoDimensionalQuery(root, queryX1, queryX2, queryY1, queryY2);
+    // query_result = oneDimensionalQuery(root->rootOfOwnRT->m_pSon[0]->m_pSon[0], 0, 999);
     cout << "Query result:\n";
     for (auto& par : query_result) {
         cout << par.F << ", " << par.S << "\n";
