@@ -66,15 +66,17 @@ int main(int argc, char** argv) {
     root = create_range_tree(points, 0, 999, nullptr, true).F;
 
     /// Dibujar puntos
-    // draw_points(argc, argv);
-    int n = 10;
-    auto start = chrono::high_resolution_clock::now();
-    for (int i = 0; i < 10; ++i) {
-        twoDimensionalQuery(root, rand()%500, rand()%999+500, rand()%500, rand()%999+500);
-    }
-    auto end = chrono::high_resolution_clock::now();
-    auto executionTime = chrono::duration_cast<chrono::microseconds>(end - start);
-    cout << "Query returned in : " << executionTime.count() << " us.\n";
+    draw_points(argc, argv);
+
+    // descomentar para pruebas de stress
+    // int n = 10; // 100, 1000, 10000
+    // auto start = chrono::high_resolution_clock::now();
+    // for (int i = 0; i < n; ++i) {
+    //     twoDimensionalQuery(root, rand()%500, rand()%999+500, rand()%500, rand()%999+500);
+    // }
+    // auto end = chrono::high_resolution_clock::now();
+    // auto executionTime = chrono::duration_cast<chrono::microseconds>(end - start);
+    // cout << "Query returned in : " << executionTime.count() << " us.\n";
 
     cout << "Programa terminando..." << endl;
 
@@ -198,7 +200,7 @@ void print_with_color(Color color, const string& str) {
 }
 
 GLvoid mouse_click(int button, int state, int x, int y) {
-    cout << "x: " << x << " y: " << y << '\n';
+    // cout << "x: " << x << " y: " << y << '\n';
 }
 
 GLvoid key_press(int key, int x, int y) {

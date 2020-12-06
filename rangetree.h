@@ -50,7 +50,7 @@ pair<Node *, Node *> create_range_tree(pair<int, int> v[], int l, int h, Node* l
     Node * parent = new Node(v[l].first, v[l].second);
     parent -> m_pSon[0] = new Node(v[l].first, v[l]. second);
     parent->m_pSon[0]->parent = parent;
-    if(lastLeafNode){ 
+    if (lastLeafNode) {
       lastLeafNode -> nextNode = parent -> m_pSon[0]; 
     }
     parent -> m_pSon[0] -> prevNode = lastLeafNode;
@@ -58,7 +58,7 @@ pair<Node *, Node *> create_range_tree(pair<int, int> v[], int l, int h, Node* l
       cout << "returning from l==h";
     }
     return {parent, parent -> m_pSon[0]};
-  } 
+  }
 
   if (l+1==h) {
     if (!firstDimension) {
@@ -116,7 +116,7 @@ pair<Node *, Node *> create_range_tree(pair<int, int> v[], int l, int h, Node* l
 
     sort(nodesInRangeArray, nodesInRangeArray+(h-l), sortbysec);
     cout << "sorted\n";
-    parent->rootOfOwnRT = create_range_tree(nodesInRangeArray, 0, h-l+1, nullptr, false).first;
+    parent->rootOfOwnRT = create_range_tree(nodesInRangeArray, 0, h-l, nullptr, false).first;
     cout << "exited if(firstDimension)\n";
   }
 
@@ -193,24 +193,3 @@ void print(Node * r) {
 }
 
 #endif
-
-// int main()
-// {
-//     pair<int,int> v[1000];
-
-//     for (int i = 0; i < 2000; i += 2) {
-//       v[i/2] = make_pair(i, 2000 - i);
-//     }
-
-//     Node * root = create_range_tree(v,0,999, nullptr, false).first;
-
-//     cout << "Testing both ways of printing.\n";
-    
-//     // print(root);
-
-//     delete root;
-
-//     cout << "num nodes: " << n << '\n';
-
-//     return 0;
-// }
